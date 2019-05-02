@@ -7,6 +7,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Parcel;
@@ -24,6 +26,7 @@ public class NLService extends NotificationListenerService {
         public static final String WHATSAPP_PACK_NAME = "com.whatsapp";
         public static final String INSTAGRAM_PACK_NAME = "com.instagram.android";
         public static final String DIALER_PACK_NAME = "com.sonymobile.android.dialer";
+        public static final String MAPS_PACK_NAME = "com.google.android.apps.maps";
     }
 
     /*
@@ -35,7 +38,8 @@ public class NLService extends NotificationListenerService {
         public static final int WHATSAPP_CODE = 2;
         public static final int INSTAGRAM_CODE = 3;
         public static final int DIALER_CODE = 4;
-        public static final int OTHER_NOTIFICATIONS_CODE = 5; // We ignore all notification with code == 4
+        public static final int MAPS_CODE = 5;
+        public static final int OTHER_NOTIFICATIONS_CODE = 6; // We ignore all notification with code == 4
     }
 
     public NLService() {
@@ -63,8 +67,13 @@ public class NLService extends NotificationListenerService {
         String notificationInfoText;
 
 
+
         int notificationCode = matchNotificationCode(sbn);
         Notification notification = sbn.getNotification();
+        for (String key : notification.extras.keySet())
+        {
+            Log.i("++++=======", key + " = \"" + notification.extras.get(key) + "\"");
+        }
 
         if(notification.extras.get("android.title") != null)
             notificationTitle = notification.extras.get("android.title").toString();
@@ -96,6 +105,7 @@ public class NLService extends NotificationListenerService {
         else
             notificationInfoText ="";
 
+
         if(notificationCode != InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE){
             Intent intent = new  Intent("app.com.miraz");
             Log.d(TAG,notificationTitle);
@@ -116,7 +126,7 @@ public class NLService extends NotificationListenerService {
 
     private int matchNotificationCode(StatusBarNotification sbn) {
         String packageName = sbn.getPackageName();
-        Log.d("+++++++++",packageName);
+        Log.i("+++++++++",packageName);
 
         if(packageName.equals(ApplicationPackageNames.FACEBOOK_PACK_NAME)
                 || packageName.equals(ApplicationPackageNames.FACEBOOK_MESSENGER_PACK_NAME)){
@@ -130,6 +140,9 @@ public class NLService extends NotificationListenerService {
         }
         else if(packageName.equals(ApplicationPackageNames.DIALER_PACK_NAME)){
             return(InterceptedNotificationCode.DIALER_CODE);
+        }
+        else if(packageName.equals(ApplicationPackageNames.MAPS_PACK_NAME)){
+            return(InterceptedNotificationCode.MAPS_CODE);
         }
         else{
             return(InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE);

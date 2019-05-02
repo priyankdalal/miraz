@@ -111,13 +111,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnStopService = (Button) findViewById(R.id.btnStopService);
-        btnStopService.setOnClickListener(new View.OnClickListener(){
+        /*btnStopService.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 Intent stopNotifierServiceIntent = new Intent(MainActivity.this,DeviceControlService.class);
                 stopService(stopNotifierServiceIntent);
             }
-        });
+        });*/
 
 
         recycleView = (RecyclerView) findViewById(R.id.recycleView);

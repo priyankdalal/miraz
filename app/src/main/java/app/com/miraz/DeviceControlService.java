@@ -67,6 +67,7 @@ public class DeviceControlService extends Service {
         super.onCreate();
         isServiceRunning = true;
         //startServiceWithNotification();
+        Log.i(TAG,"registering notification service");
         notificationReciever = new NotificationReciever();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("app.com.miraz");
@@ -196,6 +197,7 @@ public class DeviceControlService extends Service {
                             }else if(charuuid.equals(notifierTimeCharactersticUUID)){
                                 notifierTimeCharacterstic = gattCharacteristic;
                             }
+                            sendMessageToBle("testing");
                         }
                     }
                 }
@@ -224,19 +226,22 @@ public class DeviceControlService extends Service {
         @Override
         public void onReceive(Context context, Intent intent){
             int recievedNotificationCode = intent.getIntExtra("notificationCode", -1);
-            if(recievedNotificationCode ==2){
-                showToast(intent.getStringExtra("notificationTitle"));
-            }else if(recievedNotificationCode == 1){
-                showToast(intent.getStringExtra("NotificationText"));
+            Log.i("+++++++++++","notification recieved"+recievedNotificationCode);
+            if(recievedNotificationCode ==1){
+                showToast(intent.getStringExtra("notificationText"));
+            }else if(recievedNotificationCode == 2){
+                showToast(intent.getStringExtra("notificationText"));
             }else if(recievedNotificationCode == 3){
-                showToast(intent.getStringExtra("NotificationText"));
+                showToast(intent.getStringExtra("notificationText"));
             }else if(recievedNotificationCode == 4){
-                showToast(intent.getStringExtra("NotificationText"));
+                showToast(intent.getStringExtra("notificationText"));
+            }else if(recievedNotificationCode == 5){
+                showToast(intent.getStringExtra("notificationTitle"));
             }else{
                 showToast("Other Notifications");
             }
             if(notifierMessageCharacterstic != null){
-                sendMessageToBle(intent.getStringExtra("notificationTitle"));
+                sendMessageToBle(intent.getStringExtra("notificationIcon"));
             }
             //do further things
         }
