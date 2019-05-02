@@ -48,9 +48,28 @@ public class DeviceControlService extends Service {
     private static final String notifierMessageCharactersticUUID = "8d8218b6-97bc-4527-a8db-13094ac06b1d";
     private static final String notifierTimeCharactersticUUID = "b7b0a14b-3e94-488f-b262-5d584a1ef9e1";
 
+    private static final String NOTIFICATION_CODE_UUID = "d6afa6d2-b79e-4d80-a517-47e898abb113";
+    private static final String NOTIFICATION_TITLE_UUID = "bbb19eb8-17ae-4345-b038-2964a44c30b6";
+    private static final String NOTIFICATION_CONVERSATION_TITLE_UUID = "8f1d743d-edf3-4b31-b70a-0781ce7395d3";
+    private static final String NOTIFICATION_SUBTEXT_UUID = "944511fb-c208-4922-8e1e-66347cf695d8";
+    private static final String NOTIFICATION_TEXT_UUID = "ef9edced-ff56-481e-9ac1-e30a3e731ec1";
+    private static final String NOTIFICATION_SELF_DISPLAY_NAME_UUID = "a2fa4dac-891b-499d-8f23-f559fc41f602";
+    private static final String NOTIFICATION_INFO_TEXT_UUID = "99c56b26-6b57-4919-8b35-e2ac42309546";
+    private static final String NOTIFICATION_ICON_UUID = "93acaf3e-6112-4904-97b1-0602eaf93994";
+    private static final String DEVICE_TIME_UUID = "efd6ec74-388b-4f48-9b54-78aa70b85fca";
+    private static final String DEVICE_BATTERY_UUID = "9960f7e4-4803-47e2-b97c-2a6bdb409e0f";
+
     private BluetoothGattService notifierService;
-    private BluetoothGattCharacteristic notifierMessageCharacterstic;
+
+    private BluetoothGattCharacteristic notifierCodeCharacterstic;
+    private BluetoothGattCharacteristic notifierTitleCharacterstic;
+    private BluetoothGattCharacteristic notifierConversationTitleCharacterstic;
+    private BluetoothGattCharacteristic notifierSubTextCharacterstic;
+    private BluetoothGattCharacteristic notifierTextCharacterstic;
+    private BluetoothGattCharacteristic notifierSelfDisplayNameCharacterstic;
+    private BluetoothGattCharacteristic notifierInfoTextCharacterstic;
     private BluetoothGattCharacteristic notifierTimeCharacterstic;
+    private BluetoothGattCharacteristic notifierBatteryCharacterstic;
 
     private NotificationReciever notificationReciever;
 
@@ -192,12 +211,25 @@ public class DeviceControlService extends Service {
                         List<BluetoothGattCharacteristic> gattCharacteristics = gattService.getCharacteristics();
                         for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
                             charuuid = gattCharacteristic.getUuid().toString();
-                            if(charuuid.equals(notifierMessageCharactersticUUID)){
-                                notifierMessageCharacterstic = gattCharacteristic;
-                            }else if(charuuid.equals(notifierTimeCharactersticUUID)){
+                            if(charuuid.equals(NOTIFICATION_CODE_UUID)){
+                                notifierCodeCharacterstic = gattCharacteristic;
+                            }else if(charuuid.equals(NOTIFICATION_TITLE_UUID)){
+                                notifierTitleCharacterstic = gattCharacteristic;
+                            }else if(charuuid.equals(NOTIFICATION_CONVERSATION_TITLE_UUID)){
+                                notifierConversationTitleCharacterstic = gattCharacteristic;
+                            }else if(charuuid.equals(NOTIFICATION_SUBTEXT_UUID)){
+                                notifierSubTextCharacterstic = gattCharacteristic;
+                            }else if(charuuid.equals(NOTIFICATION_TEXT_UUID)){
+                                notifierTextCharacterstic = gattCharacteristic;
+                            }else if(charuuid.equals(NOTIFICATION_SELF_DISPLAY_NAME_UUID)){
+                                notifierSelfDisplayNameCharacterstic = gattCharacteristic;
+                            }else if(charuuid.equals(NOTIFICATION_INFO_TEXT_UUID)){
+                                notifierInfoTextCharacterstic = gattCharacteristic;
+                            }else if(charuuid.equals(DEVICE_TIME_UUID)){
                                 notifierTimeCharacterstic = gattCharacteristic;
+                            }else if(charuuid.equals(DEVICE_BATTERY_UUID)){
+                                notifierBatteryCharacterstic = gattCharacteristic;
                             }
-                            sendMessageToBle("testing");
                         }
                     }
                 }
@@ -214,10 +246,10 @@ public class DeviceControlService extends Service {
     };
 
     // send messages to BLE
-    public void sendMessageToBle(String message){
-        if(mbluetoothGatt != null && notifierMessageCharacterstic != null){
-            notifierMessageCharacterstic.setValue(message);
-            mbluetoothGatt.writeCharacteristic(notifierMessageCharacterstic);
+    public void sendMessageToBle(BluetoothGattCharacteristic bleCharacterstic,String message){
+        if(mbluetoothGatt != null && bleCharacterstic != null){
+            bleCharacterstic.setValue(message);
+            mbluetoothGatt.writeCharacteristic(bleCharacterstic);
         }
     }
 
@@ -240,8 +272,8 @@ public class DeviceControlService extends Service {
             }else{
                 showToast("Other Notifications");
             }
-            if(notifierMessageCharacterstic != null){
-                sendMessageToBle(intent.getStringExtra("notificationIcon"));
+            if(notifierTextCharacterstic != null){
+                sendMessageToBle(notifierTextCharacterstic, intent.getStringExtra("notificationIcon"));
             }
             //do further things
         }
